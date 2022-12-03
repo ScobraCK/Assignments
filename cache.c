@@ -37,7 +37,7 @@ int getBitCount(unsigned int n) {
 //make an initialized LINE array
 LINE *makeSetLines(int e) {
     LINE *lines = malloc(sizeof(LINE)*e);
-    memset(lines, 0, sizeof(LINE));
+    memset(lines, 0, sizeof(LINE)*e);
     return lines;
 }
 
@@ -66,7 +66,7 @@ int makeCache(CACHE *C, unsigned int sets, unsigned int blocks, unsigned int blo
     for(unsigned int i = 0; i < C->s; i++) {
         C->sets[i].next = 0;
         C->sets[i].lru = malloc(sizeof(int) * C->e);
-        memset(C->sets[i].lru, 0, sizeof(int));
+        memset(C->sets[i].lru, 0, sizeof(int)*C->e);
         C->sets[i].lines = makeSetLines(C->e);
     }
 
@@ -89,11 +89,11 @@ int findSetInd(unsigned int add, int setBits, int offsetBits) {
 //finds if there is a block with matching tag in the set
 //returns -1 if there is none
 //shiftCount is bitCount of offset and set combined
-int findLine(SET S, unsigned int add, int e, int setBits, int offsetBits) {
+int findLine(SET *S, unsigned int add, int e, int setBits, int offsetBits) {
     unsigned int tagComp = UINT_MAX; //all 1 bits
     tagComp <<= (setBits + offsetBits); // & with this only leaves tag bits
     for(int i = 0; i < e; i++) {
-        if(S.lines[i].tag == (add & tagComp)) {
+        if(S->lines[i].tag == (add & tagComp)) {
             return i;
         }
     }
@@ -140,7 +140,7 @@ int evictLRU(int *lru, int e) {
 //returns 1 if replaced dirty bit(wrote to memory), else 0
 int fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
     int dirty = 0;
-    if (L->valid) { //check dirty bit if replacing
+    if (L->valid == 1) { //check dirty bit if replacing
         if (L->dirty) { //if a valid block was replaced
             dirty = 1;
         }
@@ -198,7 +198,7 @@ int fetchData(CACHE *C, SET* set, unsigned int add, short policy) {
 int load(CACHE *C, unsigned int add, int* cycles, short policy) {
     int setInd = findSetInd(add, C->setBitCount, C->offsetBitCount);
     SET *set = &(C->sets[setInd]);  
-    int lineInd = findLine(*set, add, C->e, C->setBitCount, C->offsetBitCount);
+    int lineInd = findLine(set, add, C->e, C->setBitCount, C->offsetBitCount);
     
     //hit
     if((lineInd != -1) && set->lines[lineInd].valid) {
@@ -213,13 +213,14 @@ int load(CACHE *C, unsigned int add, int* cycles, short policy) {
     int dirty; //flag for if diry data was replaced
     dirty = fetchData(C, set, add, policy);
     *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + dirty); //1 for fetch + 1 if dirty eviction
+    *cycles += CACHE_CYCLE; //read fetched from cash
     return MISS;
 }
 
 int store(CACHE *C, unsigned int add, int* cycles, short alloc, short wBack, short policy) {
     int setInd = findSetInd(add, C->setBitCount, C->offsetBitCount);
     SET *set = &(C->sets[setInd]);  
-    int lineInd = findLine(*set, add, C->e, C->setBitCount, C->offsetBitCount);
+    int lineInd = findLine(set, add, C->e, C->setBitCount, C->offsetBitCount);
 
     //hit
     if((lineInd != -1) && set->lines[lineInd].valid) {
