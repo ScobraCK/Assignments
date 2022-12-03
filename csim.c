@@ -20,8 +20,6 @@ reading of file ends when a line is just "\n" of EOF
 #include <string.h>
 #include "cache.h"
 
-
-
 int main(int argc, char const *argv[]) {
     unsigned int sets, blocks, blockSize;
     short writeAlloc, writeBack, replacePolicy;
@@ -78,24 +76,30 @@ int main(int argc, char const *argv[]) {
         if (strcmp(trace, "\n")==0) {
             break;
         }
-        if(trace[0] == 's') {
-            strcpy(trace, "\n");
-            continue;
-        }
-        printf("%s", trace); //testing
 
         add = (unsigned int) strtoul(trace+2, NULL, 0); //add is trace starting with 2 offset
-        hit = load(&C, add, &cycles, replacePolicy);
-        if(hit) {
-            ldHit++;
+        //loads
+        if (trace[0] == 'l') { 
+            hit = load(&C, add, &cycles, replacePolicy);
+            if(hit) {
+                ldHit++;
+            }
+            else {
+                ldMiss++;
+            }
+            loads++;
         }
         else {
-            ldMiss++;
+            hit = store(&C, add, &cycles, writeAlloc, writeBack, replacePolicy);
+            if(hit) {
+                stHit++;
+            }
+            else {
+                stMiss++;
+            }
+            stores++;
         }
-        loads++;
-
-        
-        strcpy(trace, "\n"); //reset trace
+        strcpy(trace, "\n"); //reset trace(in case of EOF)
     }
 
     printf("Total loads: %d\nTotal stores: %d\n", loads, stores);

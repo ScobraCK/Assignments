@@ -47,6 +47,7 @@ int makeCache(CACHE *C, unsigned int sets, unsigned int blocks, unsigned int blo
  short alloc, short wBack, short policy) {
     C->s = sets;
     C->e = blocks;
+    C->blockSize = blockSize;
     C->sets = malloc(sizeof(SET)*C->s);
 
     //check if line count(blocks) is power of 2
@@ -56,7 +57,7 @@ int makeCache(CACHE *C, unsigned int sets, unsigned int blocks, unsigned int blo
 
     //check set and blocksize
     C->setBitCount = getBitCount(C->s);
-    C->offsetBitCount = getBitCount(blockSize); //at least 4(2^2)
+    C->offsetBitCount = getBitCount(C->blockSize); //at least 4(2^2)
     if(C->setBitCount < 0 || C->offsetBitCount < 2) {
         return -1;
     }
@@ -99,17 +100,6 @@ int findLine(SET S, unsigned int add, int e, int setBits, int offsetBits) {
     return -1; //not found
 }
 
-//fetches clock info from me
-void fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
-    L->valid = 1;
-
-    unsigned int comp = UINT_MAX; 
-    comp <<= (setBits + offsetBits);
-    L->tag = add & comp;
-
-    //also would fetch block data
-}
-
 //updates lru
 //shifts lru and puts updateline in lru[0]
 //hit: if newline was already in lru(hit)
@@ -146,6 +136,64 @@ int evictLRU(int *lru, int e) {
     return evicted;
 }
 
+//fetches block info from memory to cache
+//returns 1 if replaced dirty bit(wrote to memory), else 0
+int fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
+    int dirty = 0;
+    if (L->valid) { //check dirty bit if replacing
+        if (L->dirty) { //if a valid block was replaced
+            dirty = 1;
+        }
+    }
+    else {
+        L->valid = 1;
+    }
+    
+    unsigned int comp = UINT_MAX; 
+    comp <<= (setBits + offsetBits);
+    L->tag = add & comp;
+
+    //also would fetch block data
+
+    return dirty;
+}
+
+//fetches block info from memory to cache according to policy
+//returns 1 if replaced dirty bit(wrote to memory), else 0
+//dirty is only updated(=1) when write-back is used
+int fetchData(CACHE *C, SET* set, unsigned int add, short policy) {
+    int dirty;
+    int next = set->next;
+    //track new blocks with next and replacing next will be FIFO
+    //no need to check for valid bits as next is filled in order
+    if(policy == FIFO) {
+        dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+        set->next = (next + 1) % C->e; //loop from 0~E(no of lines)
+    }
+    else if (policy == RANDOM) {
+        if (next < C->e) { //there are non-valid lines left
+            dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+            set->next = next + 1;
+        }
+        else { //fetch to random
+            int randLine = rand() % C->e;
+            dirty = fetch(&(set->lines[randLine]), add, C->setBitCount, C->offsetBitCount);
+        }
+    }
+    else { //LRU
+        if (next < C->e) {
+            updateLRU(set->lru, next, C->e, MISS);
+            dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+            set->next = next + 1;
+        }
+        else { //evict and fetch to evicted
+            int evicted = evictLRU(set->lru, C->e);
+            dirty = fetch(&(set->lines[evicted]), add, C->setBitCount, C->offsetBitCount); 
+        }
+    }
+    return dirty;
+}
+
 //returns 1 if hit, 0 if miss
 int load(CACHE *C, unsigned int add, int* cycles, short policy) {
     int setInd = findSetInd(add, C->setBitCount, C->offsetBitCount);
@@ -162,35 +210,45 @@ int load(CACHE *C, unsigned int add, int* cycles, short policy) {
     }
 
     //miss
-    int next = set->next;
-    //track new blocks with next and replacing next will be FIFO
-    //no need to check for valid bits as next is filled in order
-    if(policy == FIFO) {
-        fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
-        set->next = (next + 1) % C->e; //loop from 0~E(no of lines)
-    }
-    else if (policy == RANDOM) {
-        if (next < C->e) { //there are non-valid lines left
-            fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
-            set->next = next + 1;
+    int dirty; //flag for if diry data was replaced
+    dirty = fetchData(C, set, add, policy);
+    *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + dirty); //1 for fetch + 1 if dirty eviction
+    return MISS;
+}
+
+int store(CACHE *C, unsigned int add, int* cycles, short alloc, short wBack, short policy) {
+    int setInd = findSetInd(add, C->setBitCount, C->offsetBitCount);
+    SET *set = &(C->sets[setInd]);  
+    int lineInd = findLine(*set, add, C->e, C->setBitCount, C->offsetBitCount);
+
+    //hit
+    if((lineInd != -1) && set->lines[lineInd].valid) {
+        if (policy == LRU) { //update lru
+            updateLRU(set->lru, lineInd, C->e, HIT);
         }
-        else { //fetch to random
-            int randLine = rand() % C->e;
-            fetch(&(set->lines[randLine]), add, C->setBitCount, C->offsetBitCount);
+
+        if (wBack == WRITE_BACK) {
+            //function to set dirty and update cache data
+            set->lines[lineInd].dirty = 1;
+            *cycles += CACHE_CYCLE;
         }
-    }
-    else { //LRU
-        if (next < C->e) { //there are non-valid lines left
-            updateLRU(set->lru, next, C->e, MISS);
-            fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
-            set->next = next + 1;
+        else { //write through
+            //function to update cache data
+            *cycles += (CACHE_CYCLE + MEM_CYCLE*(C->blockSize)/4);
         }
-        else { //evict and fetch to evicted
-            int evicted = evictLRU(set->lru, C->e);
-            fetch(&(set->lines[evicted]), add, C->setBitCount, C->offsetBitCount); 
-        }
+        return HIT;
     }
 
-    *cycles += MEM_CYCLE;
+    //miss
+    if (alloc == WRITE_ALLOCATE) {
+        int dirty; //flag for if diry data was replaced
+        dirty = fetchData(C, set, add, policy);
+        *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + dirty); //block is fetched
+        
+        *cycles += CACHE_CYCLE; //writes to cache
+    } else { //no-wirte-allocate
+        *cycles += MEM_CYCLE * (C->blockSize/4); //write directly to memory
+    }
+    
     return MISS;
 }

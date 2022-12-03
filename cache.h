@@ -33,6 +33,7 @@ typedef struct SET {
 typedef struct CACHE {
     int s; //no of sets
     int e; //no of lines(blocks)
+    int blockSize;
     SET* sets;
     int setBitCount;
     int offsetBitCount;
@@ -40,5 +41,6 @@ typedef struct CACHE {
 
 int makeCache(CACHE *, unsigned int , unsigned int , unsigned int ,short , short , short );
 int load(CACHE *C, unsigned int add, int* cycles, short policy);
+int store(CACHE *C, unsigned int add, int* cycles, short alloc, short wBack, short policy);
 
 #endif
