@@ -8,7 +8,7 @@ Simple cache simulator for a school assignment.
 * lru (least-recently-used), fifo, or random evictions
 
 Assume that loads/stores from/to the cache take one processor cycle. 
-Loads/stores from/to memory take 100 processor cycles for each 4-byte quantity that is transferred . 
+Loads/stores from/to memory take 100 processor cycles for each 4-byte quantity that is transferred. 
 
 ## Inputs
 * number of sets in the cache (a positive power-of-2)
@@ -26,6 +26,11 @@ Loads/stores from/to memory take 100 processor cycles for each 4-byte quantity t
 * Store hits
 * Store misses
 * Total cycles
+
+## Features not implemented
+* Evicting blocks with dirty bits set to 0 first when cache is full. (When using write-back)
+* Efficient implementation of LRU buffer (use of lists/hash etc)
+* and probably  many more
 
 ## Useage Example
 For a cache with 256 sets of 4 blocks each with 16 bytes of memory per block.
