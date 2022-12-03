@@ -127,22 +127,22 @@ void updateLRU(int *lru, int updateLine, int e, int hit) {
 //returns index to evict and puts evict index in lru[0]
 //not the most efficient code but does its job
 int evictLRU(int *lru, int e) {
-    int evicted = lru[e-1];
+    int evictInd = lru[e-1];
     //shift lru
     for(int i = e-1; i > 0; i--) {
         lru[i] = lru[i-1];
     }
-    lru[0] = evicted;
-    return evicted;
+    lru[0] = evictInd;
+    return evictInd;
 }
 
 //fetches block info from memory to cache
 //returns 1 if replaced dirty bit(wrote to memory), else 0
 int fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
-    int dirty = 0;
-    if (L->valid == 1) { //check dirty bit if replacing
+    int evicted = 0;
+    if (L->valid) { //check dirty bit if replacing
         if (L->dirty) { //if a valid block was replaced
-            dirty = 1;
+            evicted = 1;
         }
     }
     else {
@@ -153,45 +153,47 @@ int fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
     comp <<= (setBits + offsetBits);
     L->tag = add & comp;
 
+    L->dirty = 0; //new data
+
     //also would fetch block data
 
-    return dirty;
+    return evicted;
 }
 
 //fetches block info from memory to cache according to policy
 //returns 1 if replaced dirty bit(wrote to memory), else 0
 //dirty is only updated(=1) when write-back is used
 int fetchData(CACHE *C, SET* set, unsigned int add, short policy) {
-    int dirty;
+    int evicted;
     int next = set->next;
     //track new blocks with next and replacing next will be FIFO
     //no need to check for valid bits as next is filled in order
     if(policy == FIFO) {
-        dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+        evicted = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
         set->next = (next + 1) % C->e; //loop from 0~E(no of lines)
     }
     else if (policy == RANDOM) {
         if (next < C->e) { //there are non-valid lines left
-            dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+            evicted = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
             set->next = next + 1;
         }
         else { //fetch to random
             int randLine = rand() % C->e;
-            dirty = fetch(&(set->lines[randLine]), add, C->setBitCount, C->offsetBitCount);
+            evicted = fetch(&(set->lines[randLine]), add, C->setBitCount, C->offsetBitCount);
         }
     }
     else { //LRU
         if (next < C->e) {
             updateLRU(set->lru, next, C->e, MISS);
-            dirty = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
+            evicted = fetch(&(set->lines[next]), add, C->setBitCount, C->offsetBitCount);
             set->next = next + 1;
         }
-        else { //evict and fetch to evicted
-            int evicted = evictLRU(set->lru, C->e);
-            dirty = fetch(&(set->lines[evicted]), add, C->setBitCount, C->offsetBitCount); 
+        else { //evict and fetch to evictInd
+            int evictInd = evictLRU(set->lru, C->e);
+            evicted = fetch(&(set->lines[evictInd]), add, C->setBitCount, C->offsetBitCount);
         }
     }
-    return dirty;
+    return evicted;
 }
 
 //returns 1 if hit, 0 if miss
@@ -210,9 +212,9 @@ int load(CACHE *C, unsigned int add, int* cycles, short policy) {
     }
 
     //miss
-    int dirty; //flag for if diry data was replaced
-    dirty = fetchData(C, set, add, policy);
-    *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + dirty); //1 for fetch + 1 if dirty eviction
+    int evicted; //flag for if diry data was replaced
+    evicted = fetchData(C, set, add, policy);
+    *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + evicted); //1 for fetch + 1 if dirty eviction
     *cycles += CACHE_CYCLE; //read fetched from cash
     return MISS;
 }
@@ -242,9 +244,9 @@ int store(CACHE *C, unsigned int add, int* cycles, short alloc, short wBack, sho
 
     //miss
     if (alloc == WRITE_ALLOCATE) {
-        int dirty; //flag for if diry data was replaced
-        dirty = fetchData(C, set, add, policy);
-        *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + dirty); //block is fetched
+        int evicted; //flag for if diry data was replaced
+        evicted = fetchData(C, set, add, policy);
+        *cycles += MEM_CYCLE * (C->blockSize/4) * (1 + evicted); //block is fetched
         
         *cycles += CACHE_CYCLE; //writes to cache
     } else { //no-wirte-allocate

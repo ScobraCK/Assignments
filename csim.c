@@ -102,6 +102,17 @@ int main(int argc, char const *argv[]) {
         strcpy(trace, "\n"); //reset trace(in case of EOF)
     }
 
+    //store leftover dirty bits?
+    int count=0;
+    for(int i = 0; i<C.s; i++) {
+        for(int j = 0; j<C.e; j++) {
+            if(C.sets[i].lines[j].dirty == 1) {
+                count++;
+            }
+        }
+    }
+    cycles += MEM_CYCLE*(C.blockSize/4)*count;
+
     printf("Total loads: %d\nTotal stores: %d\n", loads, stores);
     printf("Loads hits: %d\nLoad misses: %d\n", ldHit, ldMiss);
     printf("Store hits: %d\nStore misses: %d\n", stHit, stMiss);
