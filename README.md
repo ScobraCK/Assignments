@@ -28,9 +28,8 @@ Loads/stores from/to memory take 100 processor cycles for each 4-byte quantity t
 * Total cycles
 
 ## Features not implemented
-* Evicting blocks with dirty bits set to 0 first when cache is full. (When using write-back)
-* Efficient implementation of LRU buffer (use of lists/hash etc)
-* and probably  many more
+* Efficient implementation of LRU buffer (making use of lists/hash etc)
+* and probably many more
 
 ## Useage Example
 For a cache with 256 sets of 4 blocks each with 16 bytes of memory per block.
