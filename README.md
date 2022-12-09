@@ -29,6 +29,7 @@ Loads/stores from/to memory take 100 processor cycles for each 4-byte quantity t
 
 ## Features not implemented
 * Efficient implementation of LRU buffer (making use of lists/hash etc)
+* Tokenization of cache trace (currently just reads by offset for convenience)
 * and probably many more
 
 ## Useage Example
