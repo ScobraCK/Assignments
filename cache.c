@@ -1,7 +1,6 @@
 /*
-Functions for initiating cache
+Functions for initiating and manipulating cache
 
-tag, set, offset bits will be int's with other bits set to 0
 */
 
 #include <limits.h>
@@ -11,7 +10,7 @@ tag, set, offset bits will be int's with other bits set to 0
 #include "cache.h"
 
 
-//returns log2 of n but returns -1 if n is not a power of zero
+//returns log2 of n but returns -1 if n is not a power of two
 int getBitCount(unsigned int n) {
     int loc = 0; //location of set bit(power of 2 has 1 set bit)
     if(!n) {
@@ -140,8 +139,8 @@ int evictLRU(int *lru, int e) {
 //returns 1 if replaced dirty bit(wrote to memory), else 0
 int fetch(LINE *L, unsigned int add, int setBits, int offsetBits) {
     int evicted = 0;
-    if (L->valid) { //check dirty bit if replacing
-        if (L->dirty) { //if a valid block was replaced
+    if (L->valid) { //if a valid block was replaced
+        if (L->dirty) { //check dirty bit if replacing
             evicted = 1;
         }
     }
@@ -207,6 +206,7 @@ int load(CACHE *C, unsigned int add, int* cycles, short policy) {
         if (policy == LRU) {
             updateLRU(set->lru, lineInd, C->e, HIT);
         }
+        //loads data from cache
         *cycles += CACHE_CYCLE;
         return HIT;
     }
@@ -231,13 +231,13 @@ int store(CACHE *C, unsigned int add, int* cycles, short alloc, short wBack, sho
         }
 
         if (wBack == WRITE_BACK) {
-            //function to set dirty and update cache data
-            set->lines[lineInd].dirty = 1;
+            //set dirty and update cache data
+            set->lines[lineInd].dirty = 1; //only case where dirty bit is set
             *cycles += CACHE_CYCLE;
         }
         else { //write through
-            //function to update cache data
-            *cycles += (CACHE_CYCLE + MEM_CYCLE*(C->blockSize)/4);
+            //update cache data
+            *cycles += (CACHE_CYCLE + MEM_CYCLE*(C->blockSize)/4); //write to both
         }
         return HIT;
     }

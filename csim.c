@@ -76,7 +76,7 @@ int main(int argc, char const *argv[]) {
         if (strcmp(trace, "\n")==0) {
             break;
         }
-
+        //could tokenize trace but direct access is more convinient for this case
         add = (unsigned int) strtoul(trace+2, NULL, 0); //add is trace starting with 2 offset
         //loads
         if (trace[0] == 'l') { 
@@ -117,6 +117,5 @@ int main(int argc, char const *argv[]) {
     printf("Loads hits: %d\nLoad misses: %d\n", ldHit, ldMiss);
     printf("Store hits: %d\nStore misses: %d\n", stHit, stMiss);
     printf("Total cycles: %d\n", cycles);
-
     return 0;
 }
