@@ -1,0 +1,16 @@
+s 0x00000010
+s 0x00000021
+s 0x00000030
+s 0x00000040
+s 0x00000010
+s 0x00000050
+s 0x00000010
+
+csim 1 4 16 write-allocate write-back fifo < fifotest.trace
+even though line 5 is the same for line 1, fifo should evict 0x00000010 after line 6
+Such, line 7 will be a miss.
+result should be only 1 hit(line 5).
+
+For comparison.
+csim 1 4 16 write-allocate write-back lru < fifotest.trace
+result should be 2 hits(5 and 7).
