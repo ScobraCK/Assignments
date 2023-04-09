@@ -25,3 +25,13 @@ Note: 𝑉(𝑖, 𝑗) = *max*(𝑉(𝑖 − 1, 𝑗), 𝑉(𝑖 − 1, 𝑗 −
 
 We will also have the base case of 𝑉(0, 𝑗) = 0 and 𝑉(𝑖, 0) = 0. 
 <br>Bottum-up construction will be done by simply looping over 𝑖 and 𝑗.
+
+
+## Finding the optimal items
+The optimal value is stored in 𝑉(𝑛, 𝑊). To find the optimal path it took to get to there, we go backwards.
+
+- If 𝑉(𝑖, 𝑗) = 𝑉(𝑖 − 1, 𝑗)
+<br>That item was not worthy so we go to 𝑉(𝑖 − 1, 𝑗)
+- Else
+<br>The item was taken and we go to 𝑉(𝑖 − 1, 𝑗 − 𝑤<sub>𝑖</sub>)
+
