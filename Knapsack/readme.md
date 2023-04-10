@@ -5,7 +5,7 @@ Last update: 2023/04/10
 
 ## Problem description
 - Given 𝑛 items and a "knapsack.”
-- Item 𝑖 has weight 𝑤𝑖 > 0 and has value 𝑣<sub>𝑖</sub> > 0.
+- Item 𝑖 has weight 𝑤<sub>𝑖</sub> > 0 and has value 𝑣<sub>𝑖</sub> > 0.
 - Knapsack has capacity of 𝑊.
 - Goal: Fill knapsack so as to maximize total value.
 
