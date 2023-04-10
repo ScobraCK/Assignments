@@ -32,7 +32,9 @@ int main(int argc, char *argv[]) {
 
     //get V[][]
     solve_knapsack(max_weight, items, V);
-    printArray(V, item_count+1, max_weight+1, "V:");
+    if (item_count < 10 && max_weight < 10) {  //only print if dataset is small, for testing purposes
+        printArray(V, item_count+1, max_weight+1, "V:");
+    }
     printf("\n----------Optimal Items----------\n");
 
     //get optimal item list
