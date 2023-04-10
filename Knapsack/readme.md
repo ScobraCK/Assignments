@@ -90,3 +90,8 @@ Total Value: 42, Total Weight: 5
 ```
 
 *The array V is only shown for example purposes and it is coded such that it will not show if 𝑛 or 𝑊 is larger than 10.
+
+`samples/` contain 5 more test cases with the files named `test#_capacity_(optimal value)`. 
+<br>These samples were refernced from *table 1* of https://www.researchgate.net/publication/349878676_A_Phase_Angle-Modulated_Bat_Algorithm_with_Application_to_Antenna_Topology_Optimization
+
+Only the 5 samples for the 0/1 knapsack problem referenced to test the code and no has other connection.
