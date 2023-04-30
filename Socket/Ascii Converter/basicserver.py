@@ -1,6 +1,6 @@
 import socket
 
-host = 'localhost'
+host = ''
 port = 12000
 
 def to_ascii(msg):
@@ -18,6 +18,7 @@ if __name__ == "__main__":
             with conn:  # context manager to ensure exit
                 while True:                
                     data = conn.recv(1024)
-                    print(f"Received from {addr}: {data}")
-                    conn.sendall(to_ascii(data))
+                    msg = data.decode('utf-8')
+                    print(f"Received from {addr}: {msg}")
+                    conn.sendall(to_ascii(msg))
                     break
