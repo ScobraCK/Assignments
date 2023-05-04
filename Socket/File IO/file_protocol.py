@@ -35,7 +35,7 @@ def parse_data(status: int, file: str=None, contents: str=None, overwrite: bool=
         }
     return json.dumps(data, ensure_ascii=False).encode('utf-8')
 
-def read_data(data: bytes) -> Tuple[int, dict[str, str, bool]]:
+def read_data(data) -> Tuple[int, dict[str, str, bool]]:
     '''returns status, data'''
     json_data = json.loads(data)
     return json_data['status'], json_data['data']

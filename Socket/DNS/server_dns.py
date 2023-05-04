@@ -1,12 +1,17 @@
 import socket
+from dns import *
 
-host = ''
+host = 'localhost'
 port = 12000
 
-def to_ascii(msg):
-    return str([ord(c) for c in msg]).encode('utf-8')
+def check_ip():
+    pass
 
-if __name__ == "__main__":   
+def check_domain():
+    pass
+
+if __name__ == "__main__":
+    dns_server = DNS()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
         s.listen()
@@ -14,11 +19,27 @@ if __name__ == "__main__":
         print(f'Server listening on port {port}')
         while True:
             conn, addr = s.accept()
-            print(f'Connected by {addr}')
+            print(f'Connected by {addr} - ', end='')
             with conn:  # context manager to ensure exit
-                while True:                
-                    data = conn.recv(1024)
-                    msg = data.decode('utf-8')
-                    print(f"Received from {addr}: {msg}")
-                    conn.sendall(to_ascii(msg))
-                    break
+                while True:
+                    # recieve data             
+                    raw_data = conn.recv(1024)
+                    # decode read data format
+                    data = read_data(raw_data)
+
+                    # insert
+                    if (status := data.get('status') == 1):
+                        print('Insert Request: ', end='')
+
+                        # check_ip()
+                        # check_domain()
+                        try:
+                            dns_server.insert_domain(data['data']['ip'], data['data']['dname'])
+                        except sqlite3.IntegrityError:
+                            print('Failed')
+
+                        conn.sendall(parse_data(1, 'A'))
+
+
+
+                    

@@ -54,3 +54,4 @@ dkms.conf
 
 .vscode/
 __pycache__/
+Socket/DNS/dns.db

@@ -1,6 +1,7 @@
 import socket
+from dns import *
 
-host = '108.61.128.46'
+host = 'localhost'
 port = 12000
 
 if __name__ == "__main__":
@@ -8,8 +9,8 @@ if __name__ == "__main__":
         s.connect((host, port))
         print('Connected to server')
 
-        message = input('Enter message: ')
-        s.sendall(message.encode('utf-8'))
-        data = s.recv(1024)
-        print(f"Received from server: {data.decode('utf-8')}")
+        s.sendall(parse_data(1, 'A', ip='1.1.1.1', dname='server.test'))
+        raw_data = s.recv(1024)
+        print(f"Received from server: {read_data(raw_data)}")
+        s.close()
     input()
