@@ -2,7 +2,7 @@ import socketserver as ss
 import json, os, pathlib
 from file_protocol import *
 
-host = 'localhost'
+host = ''
 port = 12000
 
 def read_file(path: pathlib.Path):
@@ -63,4 +63,7 @@ class MyHandler(ss.BaseRequestHandler):
 if __name__ == "__main__":   
     with MyServer((host, port), MyHandler) as s:
         print(f'Server listening on port {port}')
+
         s.serve_forever()
+
+        

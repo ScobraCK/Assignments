@@ -1,6 +1,6 @@
 # Socket Programming
 Computer Networks HW
-<br>Simple socket proigramming using python
+<br>Simple socket programming using python
 
 Assignment should show the basic socket functions such as socket() bind(), listen() etc so socketserver will not be used and be kept simple.
 
