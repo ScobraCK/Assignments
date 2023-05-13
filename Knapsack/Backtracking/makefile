@@ -1,8 +1,8 @@
-knapsack_solve: solve.o knapsack.o array.o
+knapsack_solve_bt: solve_bt.o knapsack_bt.o
 	gcc -o $@ $^ -g
 
-%.o: %.c knapsack.h array.h
+%.o: %.c knapsack_bt.h
 	gcc -c -o $@ $< -g
 
 clean:
-	del knapsack_solve.exe *.o
+	del knapsack_solve_bt.exe *.o

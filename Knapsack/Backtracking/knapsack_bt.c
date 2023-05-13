@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "knapsack_bt.h"
+
+void copy_array(Include *original, Include *copy, int rows) {
+    Include copy_arr = *copy;
+    Include original_arr = *original;
+	for(int i = 0; i<rows; i++) {
+		copy_arr[i] = original_arr[i];
+	}
+}
+
+//creates deep copy for include
+//a deep copy is nessecary for when doing branch and bound
+void copy_node(Node *original, Node *copy) {
+    copy->index = original->index;
+    copy->profit = original->profit;
+    copy->weight = original->weight;
+
+    copy->include = malloc(sizeof(int) * (original->include[0]+1));
+    copy_array(&(original->include), &(copy->include), original->include[0]+1);
+}
+
+int promising(Node node, int max_weight, Item* items, Node *best){
+    int total_weight, j;
+    double bound;
+    int item_count = node.include[0];
+
+    if (node.weight >= max_weight) { //case 1: overweight
+        return 0;
+    }
+
+    //case 2: calculate bound
+    bound = node.profit;
+    total_weight = node.weight;
+    for (j = node.index+1; (j <= item_count) && (total_weight+items[j].weight <= max_weight); j++) {
+        total_weight += items[j].weight;
+        bound += items[j].value;
+    }
+
+    if (j <= item_count) {
+        bound += (max_weight - total_weight) * items[j].value / items[j].weight;
+    }
+
+    return bound > best->profit;
+}
+
+void solve_knapsack(Node node, int max_weight, Item *items, Node *best) {
+    if (node.weight <= max_weight && node.profit > best->profit) { //update max_profit
+        best->index = node.index;
+        best->profit = node.profit;
+        best->weight = node.weight;
+        copy_array(&(node.include), &(best->include), node.include[0]+1);
+    }
+
+    if (promising(node, max_weight, items, best)) {
+        int next_ind = ++node.index;
+        //create new node state
+        Node taken, not_taken;
+        copy_node(&node, &taken);
+        copy_node(&node, &not_taken);
+        //taken
+        taken.include[next_ind] = TAKEN;
+        taken.profit = node.profit + items[node.index].value;
+        taken.weight = node.weight + items[node.index].weight;
+        solve_knapsack(taken, max_weight, items ,best);
+
+        //not taken
+        not_taken.include[next_ind] = NOT_TAKEN;  //redundant in this case
+        solve_knapsack(not_taken, max_weight, items, best);
+        
+        //free copied Include
+        free(taken.include);
+        free(not_taken.include);
+    }
+}
