@@ -11,7 +11,6 @@ typedef struct Item {
 } Item;
 
 typedef int *Include;
-
 typedef struct Node {
     int index;
     int profit;
