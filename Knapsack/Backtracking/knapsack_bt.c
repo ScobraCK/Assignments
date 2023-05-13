@@ -26,7 +26,8 @@ int promising(Node node, int max_weight, Item* items, Node *best){
     double bound;
     int item_count = node.include[0];
 
-    if (node.weight >= max_weight) { //case 1: overweight
+    //case 1: overweight
+    if (node.weight >= max_weight) { 
         return 0;
     }
 
@@ -46,19 +47,23 @@ int promising(Node node, int max_weight, Item* items, Node *best){
 }
 
 void solve_knapsack(Node node, int max_weight, Item *items, Node *best) {
-    if (node.weight <= max_weight && node.profit > best->profit) { //update max_profit
+    //keep track of best node
+    if (node.weight <= max_weight && node.profit > best->profit) {
         best->index = node.index;
         best->profit = node.profit;
         best->weight = node.weight;
         copy_array(&(node.include), &(best->include), node.include[0]+1);
     }
 
+    //check promising
     if (promising(node, max_weight, items, best)) {
         int next_ind = ++node.index;
-        //create new node state
+
+        //expand the tree
         Node taken, not_taken;
         copy_node(&node, &taken);
         copy_node(&node, &not_taken);
+
         //taken
         taken.include[next_ind] = TAKEN;
         taken.profit = node.profit + items[node.index].value;
