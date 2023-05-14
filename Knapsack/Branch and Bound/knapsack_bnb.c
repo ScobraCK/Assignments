@@ -68,8 +68,7 @@ void solve_knapsack(Node *node, int max_weight, Item *items, Node *best) {
             copy_array(next_node->include, best->include, item_count+1);
         }
 
-        //stop if bound is lower than profit or last index
-        //in backtracking, promising checks for index
+        //stop if bound is lower than profit
         if (next_node->bound <= best->profit) {
             break;
         }
