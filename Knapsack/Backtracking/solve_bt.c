@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     //sort items using built in qsort()
     qsort(items+1, item_count, sizeof(Item), compare_item);  //index 0 is not part of sort
-    
+
     //test sort
     // for(int i = 1; i <= item_count; i++) {
     //     printf("%d. Value: %d, Weight: %d\n", i, items[i].value, items[i].weight);  

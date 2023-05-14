@@ -11,7 +11,6 @@ void copy_array(Include *original, Include *copy, int rows) {
 }
 
 //creates deep copy for include
-//a deep copy is nessecary for when doing branch and bound
 void copy_node(Node *original, Node *copy) {
     copy->index = original->index;
     copy->profit = original->profit;
@@ -40,7 +39,7 @@ int promising(Node node, int max_weight, Item* items, Node *best){
     }
 
     if (j <= item_count) {
-        bound += (max_weight - total_weight) * items[j].value / items[j].weight;
+        bound += (double)(max_weight - total_weight) * (double)items[j].value / (double)items[j].weight;
     }
 
     return bound > best->profit;
