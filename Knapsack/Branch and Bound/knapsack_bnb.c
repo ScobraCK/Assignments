@@ -88,6 +88,10 @@ void solve_knapsack(Node *node, int max_weight, Item *items, Node *best) {
         if (taken->bound > 0) {  //-1 for overweight
             enqueue(PQ, taken);
         }
+        else {
+            free(taken->include);
+            free(taken);
+        }
         
         //not taken
         not_taken->index = next_ind;
@@ -96,6 +100,10 @@ void solve_knapsack(Node *node, int max_weight, Item *items, Node *best) {
         if (not_taken->bound > 0) {
             enqueue(PQ, not_taken);
         }
+        else {
+            free(not_taken->include);
+            free(not_taken);
+        }
 
         //free include
         free(next_node->include);
@@ -103,12 +111,12 @@ void solve_knapsack(Node *node, int max_weight, Item *items, Node *best) {
         next_node = NULL;
     }
 
-    //free queue
-    while (next_node) {
-        free(next_node->include);
-        free(next_node);
-        next_node = dequeue(PQ);
-    }
+    //free queue (causes memory errors in some cases, not sure why)
+    // while (next_node) {
+    //     free(next_node->include);
+    //     free(next_node);
+    //     next_node = dequeue(PQ);
+    // }
 
     delete_queue(PQ);
 }
