@@ -66,8 +66,8 @@ void solve_knapsack(Node node, int max_weight, Item *items, Node *best) {
 
         //taken
         taken.include[next_ind] = TAKEN;
-        taken.profit = node.profit + items[node.index].value;
-        taken.weight = node.weight + items[node.index].weight;
+        taken.profit = node.profit + items[next_ind].value;
+        taken.weight = node.weight + items[next_ind].weight;
         solve_knapsack(taken, max_weight, items ,best);
 
         //not taken
