@@ -70,7 +70,7 @@ void solve_knapsack(Node *node, int max_weight, Item *items, Node *best) {
 
         //stop if bound is lower than profit or last index
         //in backtracking, promising checks for index
-        if ((next_node->bound <= best->profit) || next_node->index == item_count) {
+        if (next_node->bound <= best->profit) {
             break;
         }
 
