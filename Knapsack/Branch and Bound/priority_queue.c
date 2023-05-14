@@ -5,8 +5,8 @@
 
 //compares node using bound
 int compare_node(void* a, void* b) {
-    int bound1 = ((Node*)a)->bound;
-    int bound2 = ((Node*)b)->bound;
+    double bound1 = ((Node*)a)->bound;
+    double bound2 = ((Node*)b)->bound;
 
     if (bound1 > bound2) {
         return -1;
@@ -27,15 +27,9 @@ void delete_queue(PriorityQueue *PQ) {
     free(PQ);
 }
 
-void enqueue(PriorityQueue *PQ, Node node) {
-    Node *new_node = malloc(sizeof(node));
-    new_node->index = node.index;
-    new_node->profit = node.profit;
-    new_node->weight = node.weight;
-    new_node->bound = node.bound;
-    new_node->include = node.include;
-
-    PQ->heap[++PQ->size] = new_node;
+void enqueue(PriorityQueue *PQ, Node *node) {
+    PQ->size++;
+    PQ->heap[PQ->size] = node;
     make_heap(PQ, compare_node);
 }
 

@@ -4,18 +4,18 @@
 
 void siftdown(Heap* H, int index, int (*cmp)(Element a, Element b)) {
     Element *heap = H->heap;
-    int parent, larger_child, left_child;
+    int parent, larger_child;
     Element node = heap[index];
     int spot_found = FALSE;
     int size = H->size;
 
     parent = index;
-    while((left_child = 2*parent) <= size && !spot_found) {
-        if (left_child < size && (cmp(heap[left_child], heap[left_child+1]) > 0)) {
-            larger_child = left_child+1;
+    while(2*parent <= size && !spot_found) {
+        if (2*parent < size && (cmp(heap[2*parent], heap[2*parent+1]) > 0)) {
+            larger_child = 2*parent+1;
         }
         else {
-            larger_child = left_child;
+            larger_child = 2*parent;
         }
 
         if (cmp(node, heap[larger_child]) > 0) {

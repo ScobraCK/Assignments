@@ -18,6 +18,6 @@ typedef struct Node {
     int* include;
 } Node;
 
-void solve_knapsack(Node node, int max_weight, Item *items, Node *best);
+void solve_knapsack(Node *node, int max_weight, Item *items, Node *best);
 
 #endif

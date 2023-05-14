@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     // }
 
     //solve
-    solve_knapsack(node, max_weight, items, best);
+    solve_knapsack(&node, max_weight, items, best);
 
     //print result
     for(int i = 1; i <= best->index; i++) {
