@@ -1,28 +1,24 @@
 import json
 from typing import Tuple
 
-def parse_data(status: int, file: str=None, contents: str=None, overwrite: bool=None) -> str:
+def parse_data(status: int, file: str=None, contents: str=None) -> str:
     '''
     Custom 'protocol' made to send and recieve data for current objective
+    
+    Status Flags
+    Client
+    1: Read
+    2: Write new file
+    3: Force Write file (overwrite if exists)
 
-    Server:
-        file is same as recieved data
+    Server
+    1: Success
+    
+    11: Failed: unsupported file type (only .txt)
+    12: Failed Read: File not found 
+    13: Failed Write: File exists (use force write to overwrite)
 
-        Read: return file data in contents
-            contents = None if file does not exist
-        Write: if file does not exist file is made and contents is None.
-            if file exists and overwrite = True, contents = overwritten file contents
-            else if overwrite = False, file = None(special case) to show
-            that contents was not written.
-
-
-    Client:
-        Read: status = 1
-            contents = None
-        Write: status = 2
-            contents is written
-            overwrite flag in case file exists
-
+    20: Unknown Request
     '''
     
     data = {
@@ -30,7 +26,6 @@ def parse_data(status: int, file: str=None, contents: str=None, overwrite: bool=
         'data': {
             'file': file,  # file path
             'contents': contents,  #file contents
-            'overwrite': overwrite  # flag for file write
             }
         }
     return json.dumps(data, ensure_ascii=False).encode('utf-8')
