@@ -33,8 +33,8 @@ if __name__ == "__main__":
                     print(f"File contents: {data['contents']}")
 
                 # if file was overwritten in force write
-                if mode == 3 and (original_contents := data.get(contents)): 
-                    print(f"Overwritten file contents: {data['contents']}")
+                if mode == 3 and (overwritten := data.get('contents')): 
+                    print(f"Overwritten file contents: {overwritten}")
                 end = True
         s.close()
     input()
