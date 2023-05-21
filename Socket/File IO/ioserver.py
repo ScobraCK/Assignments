@@ -47,30 +47,31 @@ if __name__ == "__main__":
                     if path.suffix != '.txt':
                         conn.sendall(parse_data(11, contents='Only .txt filenames allowed'))
 
-                    if status == 1: # read
-                        print('Request: Read file')
-                        if path.exists():  
-                            read_contents = read_file(path)
-                            conn.sendall(parse_data(1, contents=read_contents))
-                        else:  # File not found: 12
-                            conn.sendall(parse_data(12, contents='File not found'))
-                    
-                    elif status == 2:  # write
-                        print('Request: Write file')
-                        if path.exists():  # File exists: 13
-                            conn.sendall(parse_data(13, contents='File exists'))
-                        else:
-                            write_file(path, contents)
-                            conn.sendall(parse_data(1))
-                    
-                    elif status == 3: # force write
-                        print('Request: Force write file')
-                        if path.exists():  # send back contents of original file if exists
-                            read_contents = read_file(path)
-                            conn.sendall(parse_data(1, contents=read_contents))
-                        else:
-                            write_file(path, contents)
-                            conn.sendall(parse_data(1))
                     else:
-                        print('Error: Unknown status')  
-                        conn.sendall(parse_data(20, contents='Unknown status'))
+                        if status == 1: # read
+                            print('Request: Read file')
+                            if path.exists():  
+                                read_contents = read_file(path)
+                                conn.sendall(parse_data(1, contents=read_contents))
+                            else:  # File not found: 12
+                                conn.sendall(parse_data(12, contents='File not found'))
+                        
+                        elif status == 2:  # write
+                            print('Request: Write file')
+                            if path.exists():  # File exists: 13
+                                conn.sendall(parse_data(13, contents='File exists'))
+                            else:
+                                write_file(path, contents)
+                                conn.sendall(parse_data(1))
+                        
+                        elif status == 3: # force write
+                            print('Request: Force write file')
+                            if path.exists():  # send back contents of original file if exists
+                                read_contents = read_file(path)
+                                conn.sendall(parse_data(1, contents=read_contents))
+                            else:
+                                write_file(path, contents)
+                                conn.sendall(parse_data(1))
+                        else:
+                            print('Error: Unknown status')  
+                            conn.sendall(parse_data(20, contents='Unknown status'))
