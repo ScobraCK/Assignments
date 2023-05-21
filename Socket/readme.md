@@ -11,7 +11,5 @@ Client will be able to read or write files(.txt) by using connection. Server and
 
 May have security risks so only will be tested on localhost.
 
-## Problem 3: DNS (Group Project)
+## Problem 3: DNS
 Server will act as a simple DNS host with id-domain_name mappings. A DB(sqlite3) will be used to save and query data.
-
-(separate github repo will be used this problem)
