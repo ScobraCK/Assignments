@@ -30,7 +30,6 @@ if __name__ == "__main__":
             with conn:  # context manager to ensure exit
                 while True:                
                     client_data = conn.recv(4096)
-                    print(addr, end=' ')
                     if not client_data:  # get empty bytestring b''
                         print(f"Closing connection: {addr}")
                         break
