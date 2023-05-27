@@ -23,11 +23,7 @@ int main(void) {
     printTree2D(T, 0);
     printf("------------------------\n");
 
-    T = insert(T, 7, compare_element);
-    printTree2D(T, 0);
-    printf("------------------------\n");
-
-    T = insert(T, 4, compare_element);
+    T = insert(T, 8, compare_element);
     printTree2D(T, 0);
     printf("------------------------\n");
 
@@ -35,35 +31,39 @@ int main(void) {
     printTree2D(T, 0);
     printf("------------------------\n");
 
+    T = insert(T, 4, compare_element);
+    printTree2D(T, 0);
+    printf("------------------------\n");
+
     T = insert(T, 3, compare_element);
     printTree2D(T, 0);
     printf("------------------------\n");
 
-    T = insert(T, 8, compare_element);
+    T = insert(T, 9, compare_element);
     printTree2D(T, 0);
     printf("------------Searching------------\n");
 
-    search(T, 5, compare_element);
-    search(T, 3, compare_element);
+    search(T, 9, compare_element);
+    search(T, 4, compare_element);
     search(T, 6, compare_element);
     printf("------------Deletion------------\n");
 
     printTree2D(T, 0);
-    printf("------------Delete 5------------\n");
+    printf("------------Delete 4------------\n");
 
-    T = delete(T, 5, compare_element);
+    T = delete(T, 4, compare_element);
+    printTree2D(T, 0);
+    printf("------------Delete 8------------\n");
+
+    T = delete(T, 8, compare_element);
+    printTree2D(T, 0);
+    printf("------------Delete 9------------\n");
+
+    T = delete(T, 9, compare_element);
     printTree2D(T, 0);
     printf("------------Delete 1------------\n");
 
     T = delete(T, 1, compare_element);
-    printTree2D(T, 0);
-    printf("------------Delete 2------------\n");
-
-    T = delete(T, 2, compare_element);
-    printTree2D(T, 0);
-    printf("------------Delete 3------------\n");
-
-    T = delete(T, 3, compare_element);
     printTree2D(T, 0);
 
     freeTree(T);
