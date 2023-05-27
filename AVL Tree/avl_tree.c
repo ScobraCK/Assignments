@@ -107,7 +107,7 @@ Tree insert(Tree T, TreeElement key, int (*cmp)(TreeElement a, TreeElement b)) {
     //right side is deeper (inserted into right)
     if (balance < -1) {
         if (cmp(key, T->ltree->value) < 0) { //inserted into left of right subtree
-            T->rtree = right_rotate(T->ltree, cmp);  //double rotate
+            T->rtree = right_rotate(T->rtree, cmp);  //double rotate
         }
         return left_rotate(T, cmp);
     }
