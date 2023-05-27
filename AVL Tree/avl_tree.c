@@ -106,7 +106,7 @@ Tree insert(Tree T, TreeElement key, int (*cmp)(TreeElement a, TreeElement b)) {
     }
     //right side is deeper (inserted into right)
     if (balance < -1) {
-        if (cmp(key, T->ltree->value) < 0) { //inserted into left of right subtree
+        if (cmp(key, T->rtree->value) < 0) { //inserted into left of right subtree
             T->rtree = right_rotate(T->rtree, cmp);  //double rotate
         }
         return left_rotate(T, cmp);
@@ -180,7 +180,7 @@ Tree delete(Tree T, TreeElement key, int (*cmp)(TreeElement a, TreeElement b)) {
     //right side is deeper (deleted from left)
     if (balance < -1) {
         if (get_balance(T->rtree) > 0) { //right side of subtree is deeper
-            T->rtree = right_rotate(T->ltree, cmp);
+            T->rtree = right_rotate(T->rtree, cmp);
         }
         return left_rotate(T, cmp);
     }
