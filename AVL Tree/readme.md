@@ -45,7 +45,7 @@ Due to the nature of inserting, in case balancing needs to be performed, the hei
 
 Inserting can be done in O(log n) time.
 
-## Deletion
+## Deleting
 When deleting a node, there will be 3 cases.
 * Case 1: Leaf node
 <br>The node to be deleted is a leaf node and can be simply deleted.
