@@ -1,1 +1,1 @@
-# Collection for School Assignment code
+Collection for School Assignment code
