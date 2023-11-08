@@ -59,6 +59,21 @@ def evaluate(self, input: str):
 ```
 Example
 ```
+DFA:
+Q = [0, 1, 2, 3]
+Σ = ['a', 'b']
+q0 = 0
+F = [3]
+δ:
+(0, 'a') = 0
+(0, 'b') = 1
+(1, 'a') = 0
+(1, 'b') = 2
+(2, 'a') = 0
+(2, 'b') = 3
+(3, 'a') = 3
+(3, 'b') = 3
+
 : False
 a: False
 bbb: True
