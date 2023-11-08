@@ -57,22 +57,22 @@ def evaluate(self, input: str):
         else:
             return False
 ```
-Example
+### Result
+![Alt text](DFA1.png)
 ```
-DFA:
-Q = [0, 1, 2, 3]
+Q = ['A', 'B', 'C', 'D']
 Σ = ['a', 'b']
-q0 = 0
-F = [3]
+q0 = A
+F = ['D']
 δ:
-(0, 'a') = 0
-(0, 'b') = 1
-(1, 'a') = 0
-(1, 'b') = 2
-(2, 'a') = 0
-(2, 'b') = 3
-(3, 'a') = 3
-(3, 'b') = 3
+('A', 'a') = A
+('A', 'b') = B
+('B', 'a') = A
+('B', 'b') = C
+('C', 'a') = A
+('C', 'b') = D
+('D', 'a') = D
+('D', 'b') = D
 
 : False
 a: False
@@ -269,3 +269,5 @@ F = [2]
 (2, '1') = 2
 (2, '0') = 2
 ```
+
+![Alt text](DFA2.png)

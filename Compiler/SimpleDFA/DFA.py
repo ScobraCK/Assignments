@@ -177,19 +177,19 @@ class DFA():
         self.print_DFA()
     
 if __name__ == "__main__":
-    states = {0, 1, 2, 3}
+    states = {'A', 'B', 'C', 'D'}
     sigma = {'a', 'b'}
-    start = 0
-    final = {3}
+    start = 'A'
+    final = {'D'}
     table = {
-        (0, 'a'): 0,
-        (0, 'b'): 1,
-        (1, 'a'): 0,
-        (1, 'b'): 2,
-        (2, 'a'): 0,
-        (2, 'b'): 3,
-        (3, 'a'): 3,
-        (3, 'b'): 3,
+        ('A', 'a'): 'A',
+        ('A', 'b'): 'B',
+        ('B', 'a'): 'A',
+        ('B', 'b'): 'C',
+        ('C', 'a'): 'A',
+        ('C', 'b'): 'D',
+        ('D', 'a'): 'D',
+        ('D', 'b'): 'D',
     }
 
     test = [
@@ -225,7 +225,8 @@ if __name__ == "__main__":
 
 
     dfa = DFA(states, sigma, start, final, table)
-    dfa.optimize()
+    dfa.print_DFA()
+    dfa.optimize()  # test
     
     for testcase in test:
         result = dfa.evaluate(testcase)
