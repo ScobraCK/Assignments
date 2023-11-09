@@ -59,6 +59,44 @@ def evaluate(self, input: str):
 ```
 ### Result
 ![Alt text](DFA1.png)
+main source
+```py
+states = {'A', 'B', 'C', 'D'}
+sigma = {'a', 'b'}
+start = 'A'
+final = {'D'}
+table = {
+    ('A', 'a'): 'A',
+    ('A', 'b'): 'B',
+    ('B', 'a'): 'A',
+    ('B', 'b'): 'C',
+    ('C', 'a'): 'A',
+    ('C', 'b'): 'D',
+    ('D', 'a'): 'D',
+    ('D', 'b'): 'D',
+}
+
+test = [
+    '',
+    'a',
+    'bbb',
+    'aba',
+    'bbbbbbbb',
+    'abababababbb',
+    'bbbaaa',
+    'baababababbabababaaababbabab',
+    'ababbabbbaX'
+]
+
+dfa = DFA(states, sigma, start, final, table)
+dfa.print_DFA()
+
+for testcase in test:
+    result = dfa.evaluate(testcase)
+    print(f'{testcase}: {result}')
+print('\n')
+```
+result
 ```
 Q = ['A', 'B', 'C', 'D']
 Σ = ['a', 'b']
@@ -220,6 +258,33 @@ Update final Equivalents. The Equivalents become the new states and the transiti
 
 
 ### Example
+main source
+```py
+minimize_states = {'A', 'B', 'C', 'D', 'E', 'F'}
+minimize_sigma = {'0', '1'}
+minimize_start = 'A'
+minimize_final = {'E', 'F'}
+minimize_table = {
+    ('A', '0'): 'B',
+    ('A', '1'): 'E',
+    ('B', '0'): 'A',
+    ('B', '1'): 'E',
+    ('C', '0'): 'B',
+    ('C', '1'): 'D',
+    ('D', '0'): 'E',
+    ('D', '1'): 'E',
+    ('E', '0'): 'F',
+    ('E', '1'): 'F',
+    ('F', '0'): 'F',
+    ('F', '1'): 'F',
+}
+
+dfa2 = DFA(minimize_states, minimize_sigma, minimize_start, minimize_final, minimize_table)
+print("Original DFA:")
+dfa2.print_DFA()
+dfa2.optimize()
+```
+result
 ```
 Original DFA:
 Q = ['A', 'B', 'C', 'D', 'E', 'F']
