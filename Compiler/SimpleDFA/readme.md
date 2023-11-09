@@ -59,6 +59,7 @@ def evaluate(self, input: str):
 ```
 ### Result
 ![Alt text](DFA1.png)
+
 main source
 ```py
 states = {'A', 'B', 'C', 'D'}
