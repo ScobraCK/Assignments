@@ -1,6 +1,9 @@
+/?
+This code has no errors
+?/
 Int a, b, sum;
 Float x1, y1, zoom;
-If (a>b) Then sum = a+b
+If (a>b) Then sum = a+b  //should be a+b;
 Else sum = a+10;
 While (a ==b) {
     zoom = (sum + x1)/10;

@@ -143,9 +143,9 @@ class Tokenizer(DFA):
                 elif next_char == self.block_comment_char:
                     self.index += 2
                     while self.text[self.index] != self.block_comment_char and self.text[self.index+1] != '/':  # move cursor until end of block
+                        self.index += 1
                         if self.index + 1 >= len(self.text):
                             return True
-                        self.index += 1
                     self.index += 2  # move cursor to next char after block comment
             return False
         

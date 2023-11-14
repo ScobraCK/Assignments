@@ -10,11 +10,15 @@ def read_optable(file_path):
     return optable
 
 if __name__ == "__main__":
+    import sys
     optable = read_optable('optable.tsv')
 
-    sc = Scanner(optable, dict())
-    sc.read_file('test3.txt')
-    sc.read_tokens()
-    sc.print_symboltable()
-    from pprint import pprint
-    pprint(sorted(sc.tokenizer.table))
+    sc = Scanner(optable)
+    sc.read_file('test/noerror.txt')
+    original_stdout = sys.stdout 	
+
+    with open('result/noerror_result.txt', 'w') as f:
+        sys.stdout = f
+        sc.read_tokens()
+        sc.print_symboltable()
+        sys.stdout = original_stdout 

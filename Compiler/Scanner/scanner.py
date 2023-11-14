@@ -30,9 +30,9 @@ class Scanner():
         InvalidOct = 'InvalidOct'
         InvalidFloat = 'InvalidFloat'
 
-    def __init__(self, optable, symboltable: Dict[str, List], default_value='_') -> None:
+    def __init__(self, optable, default_value='_') -> None:
         self.tokenizer = self.init_tokenizer(optable)
-        self.symboltable = symboltable
+        self.symboltable = dict()
         self.optable = optable
         self.default_value = default_value
 
