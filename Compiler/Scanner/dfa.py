@@ -142,7 +142,7 @@ class Tokenizer(DFA):
                     self.index += 1  # move cursor to next char
                 elif next_char == self.block_comment_char:
                     self.index += 2
-                    while self.text[self.index] != self.block_comment_char and self.text[self.index+1] != '/':  # move cursor until end of block
+                    while self.text[self.index] != self.block_comment_char or self.text[self.index+1] != '/':  # move cursor until end of block
                         self.index += 1
                         if self.index + 1 >= len(self.text):
                             return True
