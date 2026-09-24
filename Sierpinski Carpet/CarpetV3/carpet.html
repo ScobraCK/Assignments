@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+uniform vec2 A;
+uniform vec2 B;
+
+void
+main()
+{   
+    // AI was used to generate math for M
+    vec2 center = (A + B) / 2.0;
+    vec2 diagonal = (A - B) / 2.0;
+    vec2 perpendicular = vec2(diagonal.y, -diagonal.x);
+    vec2 xAxis = perpendicular - diagonal;
+    vec2 yAxis = perpendicular + diagonal;
+
+    mat3 M = mat3(
+        xAxis.x, xAxis.y, 0.0,
+        yAxis.x, yAxis.y, 0.0,
+        center.x - perpendicular.x, center.y - perpendicular.y, 1.0
+    );
+    gl_Position = vec4((M * vec3(vPosition.xy, 1.0)).xy, 0.0, 1.0);  //vPosition is vec4. use vPosition.xy
+}
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+uniform float r;
+uniform float g;
+uniform float b;
+
+void
+main()
+{
+    gl_FragColor = vec4( r / 255.0, g / 255.0, b / 255.0, 1.0 );
+}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="carpet.js"></script>
+</head>
+
+<body>
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+<div>
+A: <input id="A_x" type="number" min="-1" max="1" step="0.1" value="-1">, <input id="A_y" type="number" min="-1" max="1" step="0.1" value="1">
+B: <input id="B_x" type="number" min="-1" max="1" step="0.1" value="1">, <input id="B_y" type="number" min="-1" max="1" step="0.1" value="-1">
+</div>
+
+<div>
+Depth: <span id="depth_value">5</span>
+<br>0 <input id="depth" type="range" min="0" max="7" value="5"> 7
+</div>
+
+Color Sliders
+<div>
+R: <span id="r_value">0</span>
+<br>
+0 <input id="r" type="range" min="0" max="255" value="0"> 255
+</div>
+
+<div>
+G: <span id="g_value">0</span>
+<br>
+0 <input id="g" type="range" min="0" max="255" value="0"> 255
+</div>
+
+<div>
+B: <span id="b_value">0</span>
+<br>
+0 <input id="b" type="range" min="0" max="255" value="0"> 255
+</div>
+
+</body>
+</html>
